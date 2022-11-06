@@ -1,0 +1,130 @@
+Есть 7 сервисов, 6 из которых шлют по нескольку сообщений заданного формата (всего 10 типов сообщений).
+Нужно все типы этих сообщений распределить по 11 очередям, включая дублирование одного сообщения сразу в несколько очередей
+
+city: [msk, spb, ekb, nsb]
+cancel-reason: [not_payed, payment_cancelled, declined]
+order-size: [small, medium, large]
+
+ordering      
+    очередей нет
+
+billing       
+    q_billing
+        order.placed city
+
+packaging     
+    q_packaging_europe              для заказов в Европе (Москва, Санкт-Петербург)
+        order.payed city
+        order.cancelled city cancel-reason
+        order.cancelled.returned city
+    q_packaging_asia                для заказов в Азии (Екатеринбург, Новосибирск)
+        order.payed city
+        order.cancelled city cancel-reason
+        order.cancelled.returned city
+
+delivery      
+    q_delivery_msk                                          для заказов в Москве
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+	delivery.updateInfo city
+    q_delivery_spb                                          для заказов в Санкт-Петербурге
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+	delivery.updateInfo city
+    q_delivery_ekb                                          для заказов в Екатеринбурге
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+	delivery.updateInfo city
+    q_delivery_nsb                                          для заказов в Новосибирске
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+	delivery.updateInfo city
+    q_delivery_large                                        для крупных заказов по всей стране
+        order.packaged city order-size
+	delivery.updateInfo city
+
+call_center  
+    q_call_center
+        order.status.response city
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+
+monitoring    
+    q_monitoring (тип: stream)
+	delivery.updateInfo city
+	order.billed city
+	order.cancelled city cancel-reason
+	order.cancelled.returned city
+	order.delivered	city
+	order.packaged city order-size
+	order.payed city
+	order.placed city
+	order.status.request city
+	order.status.responseed city
+
+notification  
+    q_notification (TTL: 60 минут)
+        order.placed city
+        order.payed city
+        order.packaged city order-size
+        order.cancelled city cancel-reason
+        order.delivered city
+
+10 типов сообщений:
+order.placed:	-> q_billing
+		-> q_monitoring
+		-> q_notification
+
+order.payed:	-> x_order.payed.headers 
+			-> q_packaging_europe 
+			-> q_packaging_asia
+		-> q_monitoring
+		-> q_notification
+		
+order.cancelled:-> x_order.cancelled.headers 
+			-> q_packaging_europe
+			-> q_packaging_asia
+			-> q_delivery_msk
+			-> q_delivery_spb
+			-> q_delivery_ekb
+			-> q_delivery_nsb
+		-> q_call_center
+		-> q_monitoring
+		-> q_notification
+
+order.cancelled.returned:-> x_order.cancelled.returned.headers
+				-> q_packaging_europe
+				-> q_packaging_asia
+			-> q_monitoring
+
+order.packaged:	-> x_order.packaged.headers
+			-> q_delivery_msk
+			-> q_delivery_spb
+			-> q_delivery_ekb
+			-> q_delivery_nsb
+			-> q_delivery_large
+		-> q_call_center
+		-> q_monitoring
+		-> q_notification
+
+delivery.updateInfo:-> x_delivery.updateInfo.headers
+			-> q_delivery_msk
+			-> q_delivery_spb
+			-> q_delivery_ekb
+			-> q_delivery_nsb
+			-> q_delivery_large
+		-> q_monitoring
+		
+order.billed:	-> q_monitoring
+
+order.delivered:-> q_monitoring
+		-> q_notification
+
+
+order.status.request:-> q_monitoring
+
+order.status.responseed:-> q_monitoring
+
+
+sudo docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 5672:5672 -p 15672:15672 rabbitmq:3.10-management
+

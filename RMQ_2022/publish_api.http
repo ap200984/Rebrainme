@@ -1,0 +1,383 @@
+@address = http://localhost:15672/api
+@auth = Authorization: Basic guest:guest
+
+GET {{address}}/definitions
+Authorization: Basic guest:guest
+
+###
+GET {{address}}/definitions
+Authorization: Basic  admin:ADMINadmin
+
+### 1
+# %2F = '/' (название vhost)
+GET {{address}}/exchanges
+Authorization: Basic  admin:ADMINadmin
+
+### 1.1
+GET {{address}}/queues/%2F/
+Authorization: Basic  admin:ADMINadmin
+
+### 1.2
+GET {{address}}/exchanges/%2F/
+Authorization: Basic  admin:ADMINadmin
+
+
+### 2
+POST {{address}}/exchanges/%2F/x_direct/publish
+Authorization: Basic admin:ADMINadmin
+
+{
+    "properties": {},
+    "routing_key": "hello_world",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### 3
+POST {{address}}/exchanges/%2F/files_exchange/publish
+Authorization: Basic admin:ADMINadmin
+
+{
+    "properties": {},
+    "routing_key": "process.file",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### 4
+POST {{address}}/exchanges/%2F/files_exchange/publish
+Authorization: Basic admin:ADMINadmin
+
+{
+    "properties": {
+        "headers": {
+            "File-Type": "pdf"
+        }
+    },
+    "routing_key": "process.file",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### 5
+POST {{address}}/exchanges/%2F/x_billing.topic/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "msk"
+        }
+    },
+    "routing_key": "order.billed",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### 6
+POST {{address}}/exchanges/%2F/x_packaging.topic/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.packaged",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+
+### order.placed
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.placed",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+#task server ip 84.201.159.122. Credentials: ['user:sqhznhj', 'root:sqhznhj']
+
+
+
+### order.payed
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "spb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.payed",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### order.cancelled
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "msk",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.cancelled",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### order.cancelled.returned
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "ekb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.cancelled.returned",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### order.packaged
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "ekb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.packaged",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### delivery.updateInfo
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "delivery.updateInfo",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### order.billed
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.billed",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### order.delivered
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.delivered",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### order.status.request
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.status.request",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+### order.status.responseed
+POST {{address}}/exchanges/%2F/x_main/publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "order.status.responseed",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### (AMQP default)
+POST {{address}}/exchanges/%2F//publish
+Authorization: Basic guest:guest
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "q_test",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### (AMQP default)
+POST {{address}}/queues/scooter_rent/q_users/get
+Authorization: Basic user_provider:user_provider
+
+{
+	"count": 5,
+	"ackmode": "ack_requeue_true",
+	"encoding": "auto",
+	"truncate": 50000
+}
+
+# curl -u guest:guest -i -H "content-type:application/json" -X POST http://127.0.0.1:15672/api/queues/scooter_rent/q_users/get -d'{"count":5,"ackmode": "ack_requeue_true","encoding":"auto","truncate":50000}' 
+
+
+### (AMQP default)
+POST {{address}}/exchanges/scooter_rent/x_main/publish
+Authorization: Basic location_provider:location_provider
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "location.test",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### (AMQP default)
+POST {{address}}/queues/scooter_rent/q_action_logging/get
+Authorization: Basic logging:logging
+
+{
+	"count": 5,
+	"ackmode": "ack_requeue_true",
+	"encoding": "auto",
+	"truncate": 50000
+}
+
+
+### (AMQP default)
+POST {{address}}/exchanges/scooter_rent/x_main/publish
+Authorization: Basic api:api
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "api.test",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### (AMQP default)
+POST {{address}}/queues/scooter_rent/q_api/get
+Authorization: Basic api:api
+
+{
+	"count": 5,
+	"ackmode": "ack_requeue_true",
+	"encoding": "auto",
+	"truncate": 50000
+}
+
+
+
+
+### (AMQP default)
+POST {{address}}/exchanges/scooter_rent/x_main/publish
+Authorization: Basic api:api
+
+{
+    "properties": {
+        "headers": {
+            "city": "nsb",
+            "order-size": "small"
+        }
+    },
+    "routing_key": "api.test",
+    "payload": "привет от кролика!",
+    "payload_encoding": "string"
+}
+
+
+### (AMQP default)
+POST {{address}}/queues/reporting/backendQueue/get
+Authorization: Basic backend:backend
+
+{
+	"count": 5,
+	"ackmode": "ack_requeue_true",
+	"encoding": "auto",
+	"truncate": 50000
+}
+
+

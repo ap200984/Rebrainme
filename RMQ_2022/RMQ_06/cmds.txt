@@ -1,0 +1,46 @@
+
+sudo vim /etc/hosts
+
+51.250.45.142 rabbit-ekb
+51.250.32.216 rabbit-prm
+
+echo super_secret > .erlang.cookie
+
+echo 'version: "3.7"
+services:
+  rabbitmq-web-6-1:
+    image: rabbitmq-web-6
+    hostname: rabbit-ekb(prm)
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 4369:4369
+      - 25672:25672
+    environment:
+    - RABBITMQ_DEFAULT_USER=guest
+    - RABBITMQ_DEFAULT_PASS=guest
+    command: ["bash", "-c", "chmod 600 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"]
+' > docker-compose.yml
+
+echo 'FROM rabbitmq:3.10.7-management
+
+COPY rabbitmq.conf /etc/rabbitmq
+
+COPY .erlang.cookie /var/lib/rabbitmq/
+
+COPY definitions.json /etc/rabbitmq/
+' > Dockerfile
+
+echo 'load_definitions    =   /etc/rabbitmq/definitions.json
+
+cluster_formation.classic_config.nodes.1 = rabbit@rabbit-ekb
+cluster_formation.classic_config.nodes.2 = rabbit@rabbit-prm
+' > rabbitmq.conf
+
+docker-compose up --build
+
+Если не соединятся:
+на одной из нод stop_app, join_cluster rabbit@rabbit-ekb(prm), start_app

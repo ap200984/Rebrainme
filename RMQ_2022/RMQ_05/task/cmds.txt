@@ -1,0 +1,5 @@
+./scripts/certgen.sh -n Server -c rabbitmq_enterprise -o RabbitMQ Server
+mv Server* ./docker_certs
+./scripts/certgen.sh -n EmailService -c email_service -o Email_LTD
+./scripts/certgen.sh -n FooService -c foo_service -o Foo_LTD
+docker-compose up --build

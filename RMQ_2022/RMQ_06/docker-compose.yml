@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  rabbitmq-web-6-1:
+    image: rabbitmq-web-6
+    hostname: rabbit-ekb
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5672:5672
+      - 15672:15672
+      #- 4369:4369
+      #- 25672:25672
+    environment:
+    - RABBITMQ_DEFAULT_USER=guest
+    - RABBITMQ_DEFAULT_PASS=guest
+    command: ["bash", "-c", "chmod 600 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"]
+
+  rabbitmq-web-6-2:
+    image: rabbitmq-web-6
+    hostname: rabbit-prm
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5673:5672
+      - 15673:15672
+      #- 4369:4369
+      #- 25672:25672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    command: ["bash", "-c", "chmod 600 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"]
+
