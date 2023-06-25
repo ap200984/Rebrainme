@@ -16,7 +16,7 @@ systemctl status postgresql-11
 
 su - postgres 
 psql
-CREATE USER pgsqlcentos WITH SUPERADMIN;
+CREATE USER pgsqlcentos WITH SUPERUSER;
 
 
 
@@ -28,7 +28,7 @@ sudo systemctl enable postgresql-11
 sudo systemctl start postgresql-11
 su - postgres 
 psql
-CREATE USER pgsqlcentos WITH SUPERADMIN;
+CREATE USER pgsqlcentos WITH SUPERUSER;
 
 
 
