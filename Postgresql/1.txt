@@ -1,0 +1,80 @@
+# Instll postgres on Centos 8
+cd /etc/yum.repos.d/ &&
+sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* &&
+sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* &&
+
+yum update -y &&
+yum install dnf -y && 
+dnf module -y disable postgresql &&
+dnf clean all &&
+#dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm &&
+dnf -y install postgresql11-server postgresql11 &&
+dnf info -y postgresql11-server postgresql11 &&
+/usr/pgsql-11/bin/postgresql-11-setup initdb &&
+systemctl enable --now postgresql-11 &&
+systemctl status postgresql-11
+
+su - postgres 
+psql
+CREATE USER pgsqlcentos WITH SUPERADMIN;
+
+
+
+# Instll postgres on Centos 7
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+sudo yum install -y postgresql11-server
+sudo /usr/pgsql-11/bin/postgresql-11-setup initdb
+sudo systemctl enable postgresql-11
+sudo systemctl start postgresql-11
+su - postgres 
+psql
+CREATE USER pgsqlcentos WITH SUPERADMIN;
+
+
+
+
+docker run -it centos/systemd bash
+yum update -y &&
+dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm &&
+dnf -qy module disable postgresql &&
+dnf install -y postgresql11-server &&
+/usr/pgsql-11/bin/postgresql-11-setup initdb &&
+systemctl enable postgresql-11 &&
+systemctl start postgresql-11 &&
+postgresql-setup --initdb &&
+systemctl enable postgresql.service &&
+systemctl start postgresql.service
+
+
+
+# ubuntu:18.04
+apt update && apt install -y wget gnupg &&
+DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata &&
+sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list' &&
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
+apt update &&
+apt-get -y install postgresql-12 &&
+/etc/init.d/postgresql start &&
+su - postgres
+psql
+CREATE USER pgsqlubuntu18 WITH SUPERUSER;
+
+
+# ubuntu:20.04
+apt update && apt install -y wget build-essential libreadline-dev zlib1g-dev &&
+wget https://ftp.postgresql.org/pub/source/v13.1/postgresql-13.1.tar.bz2 &&
+tar -xvf postgresql-13.1.tar.bz2 &&
+cd postgresql-13.1
+
+./configure
+make
+make install
+adduser postgres
+mkdir -p /usr/local/pgsql/data
+chown postgres /usr/local/pgsql/data
+su - postgres
+/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfile start
+/usr/local/pgsql/bin/psql
+CREATE USER pgsqlubuntu20 with SUPERUSER;
+
