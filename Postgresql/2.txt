@@ -52,3 +52,21 @@ INSERT INTO users(username,email,mobile_phone,firstname,lastname,city,is_curator
     ('Kisa007','Kisa007@mail.ru','	+79112405972','Raya','Simonova','Tver','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
     ('greenball','maike.greenball.vazovsky@corp.com','	+79112425872','Mike','Vazovsky','Monstertown','false',('epoch'::timestamptz + 1354843544* '1 second'::interval));
 
+
+CREATE TABLE courses(
+    course_id SERIAL PRIMARY KEY NOT NULL,  -- Primary Key
+    coursename varchar(50) NOT NULL,        -- Название практикума
+    tasks_count INT NOT NULL,               -- Количество заданий в практикуме
+    price INT NOT NULL                      -- Цена практикума
+    );
+
+INSERT INTO courses(course_id,coursename,tasks_count,price) VALUES
+    ('1','Kubernetes','70','35000'),
+    ('2','Highload','130','75000'),
+    ('3','Bash','15','6900'),
+    ('4','Golang','117','55000'),
+    ('5','Linux','102','65000'),
+    ('6','Devops','212','75000'),
+    ('7','Docker','45','30000'),
+    ('8','Logs','14','7900');
+
