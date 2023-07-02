@@ -1,0 +1,54 @@
+# install postgres 13 on ubuntu 20.04
+apt update && apt install -y wget gnupg &&
+DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata &&
+sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list' &&
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
+apt update &&
+apt-get -y install postgresql-13 &&
+/etc/init.d/postgresql start
+
+# Add root
+su - postgres
+psql
+CREATE USER root WITH SUPERUSER;
+
+# add deb
+CREATE DATABASE rebrain_courses_db;
+
+# add user
+CREATE USER rebrain_admin;
+
+# GRANT
+GRANT ALL PRIVILEGES ON DATABASE rebrain_courses_db to rebrain_admin;
+GRANT CONNECT ON DATABASE rebrain_courses_db TO rebrain_admin;
+
+useradd rebrain_admin
+su - rebrain_admin
+psql -U rebrain_admin -d rebrain_courses_db
+
+
+CREATE TABLE users(
+    user_id SERIAL PRIMARY KEY NOT NULL,             -- Primary Key
+    username varchar(50) NOT NULL,                   -- Имя пользователя
+    email varchar(50) NOT NULL,                      -- Электронная почта
+    mobile_phone varchar(12) NOT NULL,               -- Номер телефона
+    firstname TEXT NOT NULL,                         -- Имя
+    lastname TEXT NOT NULL,                          -- Фамилия
+    city  TEXT,                                      -- Название города
+    is_curator boolean NOT NULL,                     -- Является ли пользователь куратором
+    record_date timestamp NOT NULL DEFAULT now()     -- Время создания записи о пользователе
+    );
+
+INSERT INTO users(username,email,mobile_phone,firstname,lastname,city,is_curator,record_date) VALUES
+    ('admin','vasiliy_ozerov@mail.com','	+79111937483','Vasiliy','Ozerov','Moscow','true',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('pricex','SimonWels@mail.com','	+79111974384','Simon','Wels','London','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('MaytheForcebewithyou','Leya.Organa@newrepublic.com','	+79991916526','Leya','Organa','Alderaan','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('yodajedi','magistr_yoda@oldrepublic.com','	+79114326786','Yoda','Yodin','Dagoba','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('herion1','Sabur03@yandex.ru','	+79110983475','Sabur','Gagiev','Kazan','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('pusha','Liliana_Sal@yandex.ru','	+79115897438','Liliana','Salohina','SPB','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('vierjohn','xen_power@mail.com','	+79112232134','John','Seltic','NULL','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('trakstars','Pronina@mail.ru','	+79811987483','Varya','Pronina','Moscow','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('vozilla','Maxxx@mail.ru','	+79111047854','Max','Visikov','NULL','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('Kisa007','Kisa007@mail.ru','	+79112405972','Raya','Simonova','Tver','false',('epoch'::timestamptz + 1354843544* '1 second'::interval)),
+    ('greenball','maike.greenball.vazovsky@corp.com','	+79112425872','Mike','Vazovsky','Monstertown','false',('epoch'::timestamptz + 1354843544* '1 second'::interval));
+
