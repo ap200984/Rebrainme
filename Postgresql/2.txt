@@ -70,3 +70,26 @@ INSERT INTO courses(course_id,coursename,tasks_count,price) VALUES
     ('7','Docker','45','30000'),
     ('8','Logs','14','7900');
 
+CREATE TABLE users__courses(
+    id SERIAL PRIMARY KEY NOT NULL,     -- Primary Key
+    user_id INT NOT NULL,               -- Foreign Key to table users 
+    course_id INT NOT NULL,             -- Foreign Key to table courses 
+    CONSTRAINT fk_user_id
+        FOREIGN KEY (user_id) 
+            REFERENCES users(user_id),
+    CONSTRAINT fk_course_id
+        FOREIGN KEY (course_id) 
+            REFERENCES courses(course_id)
+    );
+
+INSERT INTO users__courses(id,user_id,course_id) VALUES
+    ('1','1','1'),
+    ('2','1','4'),
+    ('3','3','2'),
+    ('4','3','4'),
+    ('5','2','6'),
+    ('6','2','1'),
+    ('7','2','2'),
+    ('8','2','4'),
+    ('9','5','6'),
+    ('10','6','6');
