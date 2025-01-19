@@ -1,0 +1,37 @@
+1. Установите kubectl и настройте autocompletion (чтобы он загружался при старте профиля). Шпаргалка по kubectl вам в помощь.
+    sudo apt-get update && sudo apt-get install -y apt-transport-https
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    sudo apt-get update
+    sudo apt-get install -y kubectl
+
+    apt-get install bash-completion
+    echo 'source <(kubectl completion bash)' >>~/.bashrc
+
+    # проверим версии клиента и api-сервера
+    kubectl version
+
+    Client Version: v1.28.1
+    Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
+    Server Version: v1.28.6
+
+2. Посмотрите список нод.
+    sudo kubectl get nodes
+
+3. Создайте неймспейс с именем my-ns.
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+        name: my-ns
+        labels:
+            name: my-ns
+    
+    >> my-ns.yaml
+
+    sudo kubectl create -f my-ns.yaml
+    sudo kubectl describe ns my-ns
+
+    sudo kubectl get ns  my-ns -o yaml
+
+4. Добавьте ему метку kubernetes=rulezz через команду kubectl label.
+    
